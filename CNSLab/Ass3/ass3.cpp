@@ -5,22 +5,31 @@ using namespace std;
 
 string generateCipherText(string plainText, vector<vector<char>> keyMatrix, map<char, int> rmp, map<char, int> cmp){
 	string s="";
-	int i=0;
 	int n=plainText.size();
-	for(i=0; i<n-1; i++){
-		if(plainText[i]==plainText[i+1] && plainText[i]!='x'){
-			s+=plainText[i];
-			s+='X';
+	for(int i=0; i<n; i++){
+		plainText[i]=toupper(plainText[i]);
+	}
+	cout<<"Plain Text : "<<plainText<<endl;
+	
+	for(int i=0; i<n; i++){
+		if(plainText[i]==' '){
+			continue;
+		}
+		if(plainText[i]=='I' || plainText[i]=='J'){
+			s+='I';
 		}
 		else{
 			s+=plainText[i];
 		}
+		if(i<n-1 && plainText[i]==plainText[i+1]){
+			s+='X'; 
+		}
 	}
-	s+=plainText[i];
-	
 	if(s.size()%2!=0){
 		s+='Z';
 	}
+
+	cout<<"Processed String : "<<s<<endl;
 	string cipherText="";
 	
 	for(int j=0; j<s.size()-1; j+=2){
@@ -35,33 +44,9 @@ string generateCipherText(string plainText, vector<vector<char>> keyMatrix, map<
 		else{
 			int x=cmp[s[j]];
 			int y=cmp[s[j+1]];
+			cipherText+=keyMatrix[rmp[s[j]]][y];
+			cipherText+=keyMatrix[rmp[s[j+1]]][x];
 			
-			if(x<y){
-				int a=x;
-				while(a<y){
-					a++;
-				}
-				cipherText+=keyMatrix[rmp[s[j]]][a];
-				int b=y;
-				while(b>x){
-					b--;
-				}
-				cipherText+=keyMatrix[rmp[s[j+1]]][b];
-			
-			}
-			else{
-				int a=x;
-				while(a>y){
-					a--;
-				}
-				cipherText+=keyMatrix[rmp[s[j]]][a];
-				int b=y;
-				while(b<x){
-					b++;
-				}
-				cipherText+=keyMatrix[rmp[s[j+1]]][b];
-			}
-		
 		}
 	}
 	
@@ -111,6 +96,7 @@ int main(){
 	string plainText;
 	cout<<"Enter plain Text : ";
 	getline(cin, plainText);
+	
 	cout<<plainText<<endl;
 	
 	string keyword;
